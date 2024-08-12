@@ -116,6 +116,6 @@ fn example() -> Result<(), Box<dyn Error>> {
     println!("################");
     println!("{:?}", input_hash);
     println!("################");
-    println!("{:?}", output_hash);
+    println!("{}", output_hash);
     Ok(())
 }
