@@ -114,8 +114,15 @@ fn example() -> Result<(), Box<dyn Error>> {
         
     }
     println!("################");
-    println!("{:?}", input_hash);
+    for (key, value) in input_hash.iter() {
+        println!("key: {}, value {:?}", key, value);
+
+    }
     println!("################");
-    println!("{}", output_hash);
+    println!("client, available, held, total, locked");
+    for (_ , client) in output_hash.iter() {
+        println!("{}", client);
+    }
+    println!("################");
     Ok(())
 }
