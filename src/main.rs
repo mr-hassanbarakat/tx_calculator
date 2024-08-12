@@ -1,6 +1,5 @@
 use client::Client;
-use serde::Deserialize;
-use std::{collections::HashMap, error::Error, hash::Hash, io, process};
+use std::{collections::HashMap, error::Error, io, process};
 use transaction::Tx;
 
 mod client;
@@ -14,26 +13,6 @@ fn main() {
         println!("error running example: {}", err);
         process::exit(1);
     }
-    // println!("Hello, world!");
-    // println!("##############");
-    // let mut x = client::Client::new(0, 0.0);
-    // println!("{}", x);
-    // x.deposit(5.1);
-    // println!("deposit 5.1");
-    // println!("{}", x);
-    // x.dispute(3.0);
-    // println!("disput 3.0");
-    // println!("{}", x);
-    // x.chargeback(2.0);
-    // println!("chargeback 2.0");
-    // println!("{}", x);
-    // x.resolve(1.0);
-    // println!("resolve 1.0");
-    // println!("{}", x);
-    // x.withdraw(2.0);
-    // println!("withdraw 2.0");
-    // println!("{}", x);
-    // println!("################");
 }
 
 fn example() -> Result<(), Box<dyn Error>> {
@@ -45,7 +24,7 @@ fn example() -> Result<(), Box<dyn Error>> {
         // deserialization.
         let record: transaction::Tx = result?;
         match record.tx_type {
-            transaction::TxType::DESPOSIT => {
+            transaction::TxType::Deposit => {
                 if let Some(client) = output_hash.get_mut(&record.client) {
                     client.deposit(record.amount);
                 } else {
@@ -55,72 +34,55 @@ fn example() -> Result<(), Box<dyn Error>> {
                     );
                 }
             }
-            transaction::TxType::WITHDRAWAL => {
+            transaction::TxType::Withdrawal => {
                 if let Some(client) = output_hash.get_mut(&record.client) {
                     client.withdraw(record.amount);
                 }
             }
-            transaction::TxType::DISPUTE => {
-                match (
+            transaction::TxType::Dispute => {
+                if let (Some(tx), Some(client)) = (
                     input_hash.get_mut(&record.tx),
                     output_hash.get_mut(&record.client),
                 ) {
-                    (Some(tx), Some(client)) => {
-                        if !tx.disput {
-                            tx.disput = true;
-                            client.dispute(tx.amount)
-                        }
+                    if !tx.disput {
+                        tx.disput = true;
+                        client.dispute(tx.amount)
                     }
-                    (_, _) => {} // do nothing, this is error,
-                                 // (None, Some(client)) => {} // do nothing this is error,
-                                 // (Some(tx), None) => {} // do nothing is is wrong,
                 }
             }
-            transaction::TxType::RESOLVE => {
-                match (
+            transaction::TxType::Resolve => {
+                if let (Some(tx), Some(client)) = (
                     input_hash.get_mut(&record.tx),
                     output_hash.get_mut(&record.client),
                 ) {
-                    (Some(tx), Some(client)) => {
-                        if tx.disput {
-                            tx.disput = true;
-                            client.resolve(tx.amount)
-                        }
+                    if tx.disput {
+                        tx.disput = true;
+                        client.resolve(tx.amount)
                     }
-                    (_, _) => {} // do nothing, this is error,
-                                 // (None, Some(client)) => {} // do nothing this is error,
-                                 // (Some(tx), None) => {} // do nothing is is wrong,
                 }
             }
-            transaction::TxType::CHARGEBACK => {
-                match (
+            transaction::TxType::Chargeback => {
+                if let (Some(tx), Some(client)) = (
                     input_hash.get_mut(&record.tx),
                     output_hash.get_mut(&record.client),
                 ) {
-                    (Some(tx), Some(client)) => {
-                        if !tx.disput {
-                            tx.disput = true;
-                            client.chargeback(tx.amount)
-                        }
+                    if !tx.disput {
+                        tx.disput = true;
+                        client.chargeback(tx.amount)
                     }
-                    (_, _) => {} // do nothing, this is error,
-                                 // (None, Some(client)) => {} // do nothing this is error,
-                                 // (Some(tx), None) => {} // do nothing is is wrong,
                 }
             }
         }
 
         input_hash.insert(record.tx, record);
-        
     }
     println!("################");
     for (key, value) in input_hash.iter() {
         println!("key: {}, value {:?}", key, value);
-
     }
     println!("################");
     println!("client, available, held, total, locked");
-    for (_ , client) in output_hash.iter() {
+    for (_, client) in output_hash.iter() {
         println!("{}", client);
     }
     println!("################");

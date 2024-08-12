@@ -3,15 +3,15 @@ use serde::Deserialize;
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 pub enum TxType {
     #[serde(rename = "deposit")]
-    DESPOSIT,
+    Deposit,
     #[serde(rename = "withdrawal")]
-    WITHDRAWAL,
+    Withdrawal,
     #[serde(rename = "disput")]
-    DISPUTE,
+    Dispute,
     #[serde(rename = "resolve")]
-    RESOLVE,
+    Resolve,
     #[serde(rename = "chargeback")]
-    CHARGEBACK,
+    Chargeback,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize)]

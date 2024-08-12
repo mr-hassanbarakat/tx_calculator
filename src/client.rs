@@ -1,7 +1,5 @@
 use serde::Serialize;
 
-use crate::transaction;
-
 #[derive(Debug, Clone, PartialEq, Default, Serialize)]
 pub struct Client {
     pub id: u16,
@@ -27,8 +25,8 @@ impl Client {
     }
     pub fn withdraw(&mut self, amount: f32) {
         if self.available - amount > 0.0000 {
-            self.available = self.available - amount;
-            self.total = self.total - amount;
+            self.available -= amount;
+            self.total -= amount;
         }
     }
 
